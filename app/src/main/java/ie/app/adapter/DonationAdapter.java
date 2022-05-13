@@ -6,13 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.helper.widget.Layer;
-
 import java.util.List;
-
 import ie.app.activities.R;
 import ie.app.models.Donation;
 
@@ -32,9 +28,11 @@ public class DonationAdapter extends ArrayAdapter<Donation> {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.row_donate, parent, false);
         Donation donation = donations.get(position);
-        TextView amountView = (TextView) view.findViewById(R.id.row_amount);
-        TextView methodView = (TextView) view.findViewById(R.id.row_method);
+        TextView amountView = view.findViewById(R.id.row_amount);
+        TextView methodView = view.findViewById(R.id.row_method);
+        TextView upVotesView = view.findViewById(R.id.row_upvotes);
 
+        upVotesView.setText(String.valueOf(donation.upvotes));
         amountView.setText("$"+donation.amount);
         methodView.setText(donation.method);
 

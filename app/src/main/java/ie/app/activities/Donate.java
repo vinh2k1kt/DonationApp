@@ -76,7 +76,8 @@ public class Donate extends Base {
             }
         }
         if(amount > 0){
-            app.newDonation(new Donation(amount, method,1));
+            new InsertTask(this).execute(new Donation(amount, method,app.donations.size(), 69));
+            app.newDonation(new Donation(amount, method,app.donations.size(), 69));
             Log.v("Donation", ""+amount+ " "+ app.totalDonated);
             progressBar.setProgress(app.totalDonated);
             amountTotal.setText("$" + app.totalDonated);
@@ -126,7 +127,6 @@ public class Donate extends Base {
                             amountTotal.setText("$"+sum);
                             progressBar.setProgress(sum);
                             if (dialog.isShowing()) {
-                                Log.v("Donate", "Is Showing");
                                 dialog.dismiss();
                             }
                         }
@@ -137,6 +137,40 @@ public class Donate extends Base {
                         }
                     }
             );
+            return null;
+        }
+    }
+
+    private class InsertTask extends AsyncTask<Donation, Void, Void> {
+        protected ProgressDialog dialog;
+        protected Context context;
+        public InsertTask(Context context)
+        {
+            this.context = context;
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            this.dialog = new ProgressDialog(context, 1);
+            this.dialog.setMessage("Saving Donation....");
+            this.dialog.show();
+        }
+        @Override
+        protected Void doInBackground(Donation... params) {
+            ApiService.apiService.addDonation(params[0]).enqueue(new Callback<Donation>() {
+                @Override
+                public void onResponse(Call<Donation> call, Response<Donation> response) {
+                    Log.v("Donate", "Donation App Inserting");
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Donation> call, Throwable t) {
+
+                }
+            });
             return null;
         }
     }
