@@ -14,7 +14,7 @@ public class DonationApp extends Application {
 
     public final int target = 10000;
     public int totalDonated =0;
-    public List <Donation> donations = new ArrayList<Donation>();
+    public List <Donation> donations = new ArrayList<>();
 
     @Override
     public void onCreate() {

@@ -37,7 +37,7 @@ public class Report extends Base {
         setContentView(R.layout.activity_report);
         listView = findViewById(R.id.reportList);
         listView.setOnItemClickListener((adapterView, view, i, l) -> {
-            new GetTask(view.getContext()).execute(app.donations.get(i).id);
+            new GetTask(view.getContext()).execute(i+1);
             view.findViewById(R.id.imgDelete).setOnClickListener(view1 -> {
                 onDonationDelete(app.donations.get(i));
             });
@@ -71,10 +71,12 @@ public class Report extends Base {
             ApiService.apiService.getDonation(params[0]).enqueue(new Callback<List<Donation>>() {
                 @Override
                 public void onResponse(Call<List<Donation>> call, Response<List<Donation>> response) {
-                    donation = response.body().get(0);
-                    Toast.makeText(Report.this, "Donation Data [ " + donation.upvotes +
-                            "]\n " +
-                            "With ID of [" + donation.id + "]", Toast.LENGTH_SHORT).show();
+                    if (response != null) {
+                        donation = response.body().get(0);
+                        Toast.makeText(Report.this, "Donation Data [ " + donation.upvotes +
+                                "]\n " +
+                                "With ID of [" + donation.id + "]", Toast.LENGTH_SHORT).show();
+                    }
                     if (dialog.isShowing()) {
                         dialog.dismiss();
                     }
@@ -117,8 +119,10 @@ public class Report extends Base {
 
                         @Override
                         public void onResponse(Call<List<Donation>> call, Response<List<Donation>> response) {
-                            Toast.makeText(context, "Called Successfully", Toast.LENGTH_SHORT).show();
-                            app.donations = response.body();
+                            if (response != null) {
+                                Toast.makeText(context, "Called Successfully", Toast.LENGTH_SHORT).show();
+                                app.donations = response.body();
+                            }
                             if (dialog.isShowing()) {
                                 dialog.dismiss();
                             }
@@ -140,7 +144,7 @@ public class Report extends Base {
         protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
             swipeRefreshLayout.setRefreshing(false);
-            if (!app.donations.isEmpty()) {
+            if (app.donations != null) {
                 DonationAdapter adapter = new DonationAdapter(context, app.donations);
                 listView.setAdapter(adapter);
             }
